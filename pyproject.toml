@@ -19,4 +19,5 @@ dependencies = [
     "aiomysql>=0.2.0",
     "boto3>=1.42.35",
     "python-multipart>=0.0.22",
+    "apscheduler>=3.11.2",
 ]
