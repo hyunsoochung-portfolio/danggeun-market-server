@@ -1,7 +1,7 @@
 # 23-5-team9-server
 ### 와플스튜디오 23.5기 9조 server Workflow
 
-build db
+Change IP
 
 - 기본 작업 브랜치: `dev`
 - 각 기능들을 개발할 때: `feature/function` 브랜치를 만들어 해당 브랜치에서 작업
