@@ -123,18 +123,5 @@ class AuctionRepository:
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
-    async def check_and_finalize_auctions(self, current_time: datetime) -> List[Auction]:
-        stmt = (
-            update(Auction)
-            .where(
-                Auction.status == AuctionStatus.ACTIVE,
-                Auction.end_at <= current_time
-            )
-            .values(status=AuctionStatus.FINISHED)
-        )
-        result = await self.session.execute(stmt)
-        await self.session.commit()
-        return result.rowcount
-
 
     

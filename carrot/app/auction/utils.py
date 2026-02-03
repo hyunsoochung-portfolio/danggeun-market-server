@@ -3,6 +3,7 @@ from datetime import datetime
 
 from carrot.app.auction.models import Auction, AuctionStatus, Bid
 from carrot.app.auction.repositories import AuctionRepository
+from carrot.app.product.repositories import ProductRepository
 from carrot.db.connection import db
 
 from carrot.app.auction.exceptions import (
@@ -25,7 +26,6 @@ async def check_bid_request(auction: Auction, bidder_id: str, bid_price: int) ->
 
 async def check_and_finalize_auction() -> None:
     async with db.session_factory() as session:
-        repository = AuctionRepository(session)
+        repository = ProductRepository(session)
         now = datetime.now()
-        result = await repository.check_and_finalize_auctions(now)
-        
+        result = await repository.check_and_finalize_auction(now)

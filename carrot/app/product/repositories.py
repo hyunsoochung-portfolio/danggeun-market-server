@@ -1,11 +1,12 @@
+import datetime
 from typing import List
 
-from sqlalchemy import select, or_
+from sqlalchemy import select, or_, update
 from sqlalchemy.orm import selectinload, contains_eager
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from carrot.app.product.models import Product
-from carrot.app.auction.models import Auction
+from carrot.app.auction.models import Auction, AuctionStatus
 
 
 class ProductRepository:
@@ -96,3 +97,29 @@ class ProductRepository:
     async def remove_post(self, product: Product) -> None:
         await self.session.delete(product)
         await self.session.flush()
+
+    async def check_and_finalize_auction(self, current_time: datetime):
+        # 1. Auction 테이블 상태 먼저 종료
+        auction_update = (
+            update(Auction)
+            .where(Auction.status == AuctionStatus.ACTIVE)
+            .where(Auction.end_at <= current_time)
+            .values(status=AuctionStatus.FINISHED)
+        )
+        
+        # 2. Product 테이블 업데이트 (Auction이 FINISHED로 바뀐 것들을 대상으로)
+        # 혹은 동일한 시간 조건을 Product 업데이트에도 적용
+        product_update = (
+            update(Product)
+            .where(
+                Product.id.in_(
+                    select(Auction.product_id)
+                    .where(Auction.end_at <= current_time)
+                )
+            )
+            .values(is_sold=True)
+        )
+
+        await self.session.execute(auction_update)
+        await self.session.execute(product_update)
+        await self.session.commit()
