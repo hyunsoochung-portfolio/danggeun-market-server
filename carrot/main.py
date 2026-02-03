@@ -9,7 +9,24 @@ from carrot.common.exceptions import CarrotException, MissingRequiredFieldExcept
 from carrot.app.auth.settings import AUTH_SETTINGS
 from carrot.settings import SETTINGS
 
-app = FastAPI()
+from carrot.app.auction.utils import check_and_finalize_auction
+from contextlib import asynccontextmanager
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # [시작 시] 스케줄러 설정
+    scheduler = AsyncIOScheduler()
+    # 60초마다 위에서 만든 함수를 실행하도록 등록
+    scheduler.add_job(check_and_finalize_auction, 'interval', seconds=60)
+    scheduler.start()
+    
+    yield # --- 앱 가동 중 ---
+    
+    # [종료 시] 스케줄러도 안전하게 닫기
+    scheduler.shutdown()
+
+app = FastAPI(lifespan=lifespan)
 
 # add session middleware (this is used internally by starlette to execute the authorization flow)
 
