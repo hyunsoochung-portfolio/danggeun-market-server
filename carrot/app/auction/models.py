@@ -23,7 +23,8 @@ class Auction(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
     product_id: Mapped[str] = mapped_column(String(36), ForeignKey("product.id", ondelete="CASCADE"), nullable=False, unique=True, index=True)
-
+    top_bidder_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("user.id", ondelete="SET NULL"), nullable=True, index=True)
+    
     # starting_price: Mapped[int] = mapped_column(Integer, nullable=False)    # 시작가
     current_price: Mapped[int] = mapped_column(Integer, nullable=False)     # 현재가
     # is_sold: Mapped[bool] = mapped_column(Boolean, default=False)         # Product의 is_sold와 중복

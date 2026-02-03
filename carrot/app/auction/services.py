@@ -45,6 +45,7 @@ class AuctionService:
         await self.repository.add_bid_without_commit(new_bid)
 
         auction.current_price = bid_price
+        auction.top_bidder_id = bidder_id
         auction.bid_count += 1
         await self.repository.update_auction_without_commit(auction)
 

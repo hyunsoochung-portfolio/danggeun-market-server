@@ -61,6 +61,7 @@ class AuctionListResponse(BaseModel):
 class AuctionResponse(BaseModel):
     id: str
     product_id: str
+    top_bidder_id: Optional[str]
     current_price: int
     end_at: datetime
     bid_count: int
