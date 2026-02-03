@@ -18,7 +18,8 @@ if SETTINGS.is_local:
     https_only = False
 else:
     same_site = "none"
-    https_only = True
+    # https_only = True
+    https_only = False  # 임시로 HTTPS 설정 해제
 
 app.add_middleware(
     SessionMiddleware,
