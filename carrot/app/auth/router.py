@@ -104,8 +104,11 @@ async def receive_code(
         )
 
     access_token, refresh_token = await auth_service.handle_google_oauth2(token)
+    base_url = AUTH_SETTINGS.FRONTEND_URL.rstrip("/")  # 끝에 붙은 / 제거
+    basename = "/23-5-team9-web"                      # 리액트의 basename 추가
+    
     redirect_url = (
-        f"{AUTH_SETTINGS.FRONTEND_URL}"
+        f"{base_url}{basename}/"                       # https://.../23-5-team9-web/
         f"?access_token={access_token}&refresh_token={refresh_token}"
     )
     return RedirectResponse(url=redirect_url)
