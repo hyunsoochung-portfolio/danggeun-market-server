@@ -113,7 +113,7 @@ class AuctionRepository:
         result = await self.session.execute(stmt)
         return result.scalars().all()
     
-    async def get_top_bid_for_auction(self, auction_id: str) -> Optional[Bid]:
+    async def get_top_bid_by_auction_id(self, auction_id: str) -> Optional[Bid]:
         stmt = (
             select(Bid)
             .where(Bid.auction_id == auction_id)
